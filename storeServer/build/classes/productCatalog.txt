@@ -1,0 +1,3 @@
+0000 Giraffe 10.00
+0001 TranqGun 20.00
+0002 Landcruiser 40000.00
