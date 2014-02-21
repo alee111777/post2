@@ -4,5 +4,20 @@
 *.jar
 *.war
 *.ear
+<<<<<<< HEAD
 /iStore/dist/
 /storeServer/dist/
+=======
+iStore/nbproject/private/private.properties
+iStore/nbproject/project.properties
+storeClient/nbproject/private/private.properties
+storeClient/nbproject/project.properties
+storeServer/build/classes/payment/CashPayment.class
+storeServer/build/classes/payment/CheckPayment.class
+storeServer/build/classes/payment/MastercardPayment.class
+storeServer/build/classes/payment/Payment.class
+storeServer/build/classes/payment/VisaPayment.class
+storeServer/build/classes/transaction/Invoice.class
+storeServer/nbproject/private/private.properties
+storeServer/nbproject/project.properties
+>>>>>>> 66b61eaaab4c319184e6e86800813109ce526965

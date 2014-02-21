@@ -29,11 +29,6 @@ public class StoreServer extends UnicastRemoteObject implements IStore {
         this.store = store;
         
     }
-
-    @Override
-    public HashMap getProductCatalog() throws RemoteException {
-        return store.getProductCatalog();
-    }
     
     /**
      * for calling with a gui. manager opens gui
@@ -78,6 +73,11 @@ public class StoreServer extends UnicastRemoteObject implements IStore {
         } catch (RemoteException e) {
             System.out.println(e);
         }
+    }
+
+    @Override
+    public HashMap getGroductCatalog() throws RemoteException {
+        return store.getProductCatalog();
     }
     
 }
