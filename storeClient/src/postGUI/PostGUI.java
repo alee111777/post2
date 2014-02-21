@@ -13,8 +13,8 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import storeserver.Store;
 import product.ProductSpec;
+import storeserver.Store;
 import transaction.Invoice;
 import transaction.Transaction;
 import transaction.TransactionItem;
@@ -340,14 +340,17 @@ public class PostGUI extends javax.swing.JFrame {
 
     private void enterButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_enterButtonMouseClicked
         String upc = (String) this.upcComboBox.getSelectedItem();
-        int numProduct = Integer.parseInt((String) this.quantityComboBox.getSelectedItem());
-        System.out.println("selected upc");
         ProductSpec productSpec = (ProductSpec)catalog.get(upc);
-        TransactionItem transItem = new TransactionItem(numProduct, upc, productSpec.getDescription(), productSpec.getPrice());
-        String formatItem = invoiceTextArea.getSelectedText();
-        formatItem += String.format("%-22s %5d %22.2f %22.2f\n",
+        TransactionItem transItem = new TransactionItem(Integer.parseInt((String) this.quantityComboBox.getSelectedItem()), 
+                upc, productSpec.getDescription(), productSpec.getPrice());
+        
+        String formatItem = String.format("%s\t\t %15d\t %1.2f\t\t %1.2f\n",
                 transItem.getName(), transItem.getQuantity(), transItem.getUnitPrice(), transItem.getExtendedPrice());
-        invoiceTextArea.setText(formatItem);
+        invoiceTextArea.append(formatItem);
+        transaction.addTransItem(transItem);
+        
+        totalAmount.setText("$" + String.valueOf(transaction.getTotal()) + "0");
+        
         this.repaint();
     }//GEN-LAST:event_enterButtonMouseClicked
 
