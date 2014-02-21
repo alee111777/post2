@@ -5,6 +5,7 @@
  */
 
 package postGUI;
+import java.awt.Font;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +37,7 @@ public class PostGUI extends javax.swing.JFrame {
         initComponents();
         this.catalog = catalog;
         
+        invoiceTextArea.setFont(new Font("MONOSPACED", Font.PLAIN, 13));
         this.upcComboBox.removeAllItems();
         ArrayList upcList = new ArrayList(catalog.keySet());
         Collections.sort(upcList);
@@ -212,13 +214,13 @@ public class PostGUI extends javax.swing.JFrame {
                         .addGap(39, 39, 39))
                     .addGroup(invoicePanelLayout.createSequentialGroup()
                         .addComponent(itemLabel)
-                        .addGap(156, 156, 156)
+                        .addGap(205, 205, 205)
                         .addComponent(qtyLabel)
-                        .addGap(91, 91, 91)
+                        .addGap(53, 53, 53)
                         .addComponent(uPriceLabel)
-                        .addGap(69, 69, 69)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(ePriceLabel)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGap(18, 18, 18))))
         );
         invoicePanelLayout.setVerticalGroup(
             invoicePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -344,7 +346,7 @@ public class PostGUI extends javax.swing.JFrame {
         TransactionItem transItem = new TransactionItem(Integer.parseInt((String) this.quantityComboBox.getSelectedItem()), 
                 upc, productSpec.getDescription(), productSpec.getPrice());
         
-        String formatItem = String.format("%s\t\t %15d\t %1.2f\t\t %1.2f\n",
+        String formatItem = String.format("%-22s\t %5d\t %14.2f\t\t %15.2f\n",
                 transItem.getName(), transItem.getQuantity(), transItem.getUnitPrice(), transItem.getExtendedPrice());
         invoiceTextArea.append(formatItem);
         transaction.addTransItem(transItem);
