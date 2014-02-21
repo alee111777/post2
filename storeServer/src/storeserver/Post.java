@@ -4,7 +4,7 @@
  * Team Ziga
  */
 
-package post;
+package storeserver;
 
 import storeserver.Store;
 import transaction.*;

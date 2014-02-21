@@ -12,7 +12,6 @@ import product.ProductReader;
 import java.io.IOException;
 import java.util.*;
 import payment.Payment;
-import post.Post;
 
 /**
  * The store is opened by managers
