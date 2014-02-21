@@ -76,7 +76,7 @@ public class StoreServer extends UnicastRemoteObject implements IStore {
     }
 
     @Override
-    public HashMap getGroductCatalog() throws RemoteException {
+    public HashMap getProductCatalog() throws RemoteException {
         return store.getProductCatalog();
     }
     

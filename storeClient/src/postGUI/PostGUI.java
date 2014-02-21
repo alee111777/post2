@@ -10,13 +10,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import storeserver.Store;
 import product.ProductSpec;
+import transaction.Invoice;
 import transaction.Transaction;
 import transaction.TransactionItem;
 
@@ -340,11 +339,6 @@ public class PostGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_nameTextFieldActionPerformed
 
     private void enterButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_enterButtonMouseClicked
-//        String upc = this.upcComboBox.getSelectedItem().toString();
-//        int amount = Integer.parseInt(this.quantityComboBox.getSelectedItem().toString());
-//        ProductSpec productSpec = store.getProductSpec(upc);
-//        TransactionItem transItem = new TransactionItem(amount, upc, productSpec.getDescription(), productSpec.getPrice());
-//        transaction.addTransItem(transItem);
         String upc = (String) this.upcComboBox.getSelectedItem();
         int numProduct = Integer.parseInt((String) this.quantityComboBox.getSelectedItem());
         System.out.println("selected upc");
@@ -353,32 +347,28 @@ public class PostGUI extends javax.swing.JFrame {
         String formatItem = invoiceTextArea.getSelectedText();
         formatItem += String.format("%-22s %5d %22.2f %22.2f\n",
                 transItem.getName(), transItem.getQuantity(), transItem.getUnitPrice(), transItem.getExtendedPrice());
-//        invoiceTextField.getSelectedText();
         invoiceTextArea.setText(formatItem);
-//        currentTime.setText(""+ new Date());//get new time
-//        
-//        String itemDet = "giraffe"; //get through rmi
-//        String itemQty =  quantityList.getSelectedItem().toString(); //get quantity
-//        String itemUPrice = "1.50"; //get through rmi
-//        
-//        String itemAll = itemDet + "    " + "   "+ itemQty + "  "+ itemUPrice +"    " ;
-//        DecimalFormat f = new DecimalFormat("##.00");  
-//        Double itemTotal = Double.parseDouble(itemQty)*Double.parseDouble(itemUPrice);
-//        totalPrice += itemTotal;
-//        invoiceText.setText(invoiceText.getText()+ itemAll+ f.format(itemTotal)+"\n"); //modity invoice
-//        totalAmount.setText("$" + f.format(totalPrice)); //modify total
         this.repaint();
     }//GEN-LAST:event_enterButtonMouseClicked
 
     private void payButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_payButtonMouseClicked
-
-        if (paymentComboBox.getSelectedItem().toString().equals("Credit")){
+        String customerName = this.nameTextField.getText();
+        if (customerName == null) {
+            //enter a prompt here. Please enter name
+            return;
+        }
+        String payType = paymentComboBox.getSelectedItem().toString();
+        if (payType.compareTo("Visa") == 0 
+                || payType.compareTo("Mastercard") == 0
+                || payType.compareTo("Cash") == 0
+                || payType.compareTo("Check") == 0 ){
             String creditNum = JOptionPane.showInputDialog(null, "Please enter your credit number", null);
-            System.out.println(creditNum);
         }
-        else {
-            //print invoice;
-        }
+        
+        Invoice invoice = new Invoice(transaction);
+        //show dialog processing invoice. and print it
+        
+        
     }//GEN-LAST:event_payButtonMouseClicked
 
     private void upcComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upcComboBoxActionPerformed
@@ -420,6 +410,7 @@ public class PostGUI extends javax.swing.JFrame {
     
     
     /**
+     * use to test gui
      * @param args the command line arguments
      */
     public static void main(String args[]) {

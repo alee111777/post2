@@ -36,7 +36,7 @@ public class StoreClient {
         try {
             Registry reg = LocateRegistry.getRegistry("127.0.0.1",1099);
             IStore storeServer = (IStore)reg.lookup("server");
-            return storeServer.getGroductCatalog();
+            return storeServer.getProductCatalog();
             
         } catch (Exception e) {
             System.out.println(e);
