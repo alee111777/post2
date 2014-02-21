@@ -38,6 +38,10 @@ public class Invoice {
         dateTime = this.getDateTime();
     }
     
+    public Transaction getTransaction() {
+        return this.transaction;
+    }
+    
     
     private String getDateTime() {
         DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");

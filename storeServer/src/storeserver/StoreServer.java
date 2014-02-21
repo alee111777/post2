@@ -13,6 +13,9 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import transaction.Transaction;
 
 /**
  *
@@ -28,7 +31,7 @@ public class StoreServer extends UnicastRemoteObject implements IStore {
     }
 
     @Override
-    public HashMap getGroductCatalog() throws RemoteException {
+    public HashMap getProductCatalog() throws RemoteException {
         return store.getProductCatalog();
     }
     
@@ -43,7 +46,16 @@ public class StoreServer extends UnicastRemoteObject implements IStore {
 
     @Override
     public boolean processInvoice(transaction.Invoice invoice) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Transaction transaction = invoice.getTransaction();
+        try {
+            Post post = new Post(this.store, transaction.getTransHeader().getCustomerName());
+            post.processTransaction(transaction);
+        } catch (IOException ex) {
+            Logger.getLogger(StoreServer.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        
+        return true;
     }
     
     public static void main(String args[]) throws IOException {

@@ -6,8 +6,11 @@
 
 package postGUI;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComboBox;
@@ -25,7 +28,6 @@ public class PostGUI extends javax.swing.JFrame {
 
     private HashMap catalog;
     private Transaction transaction;
-    private ProductSpec productSpec;
     
     /**
      * Creates new form PostGUI
@@ -34,17 +36,13 @@ public class PostGUI extends javax.swing.JFrame {
     public PostGUI(HashMap catalog) {
         initComponents();
         this.catalog = catalog;
-//        this.upcComboBox = new JComboBox(catalog.getUPCList());
-//        //this.upcComboBox = new JComboBox();
-//        //this.upcComboBox.removeAll();
-//
-//        upcComboBox.addActionListener(upcComboBox);
-//        
-//        String[] upcList = catalog.getUPCList();
-//        for (int i = 0; i < upcList.length; i++) {
-//           upcComboBox.addItem(upcList[i]);
-//           upcComboBox.getSelectedItem();
-//        }
+        
+        this.upcComboBox.removeAllItems();
+        ArrayList upcList = new ArrayList(catalog.keySet());
+        Collections.sort(upcList);
+        for (Object upc : upcList) {
+            this.upcComboBox.addItem((String)upc);
+        }
         
         
         transaction = new Transaction();
@@ -129,6 +127,11 @@ public class PostGUI extends javax.swing.JFrame {
         for (int i = 0; i<items.length;i++){
             upcComboBox.addItem(items[i]);
         }
+        upcComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                upcComboBoxActionPerformed(evt);
+            }
+        });
 
         quantityLabel.setText("Quantity");
 
@@ -345,7 +348,7 @@ public class PostGUI extends javax.swing.JFrame {
         String upc = (String) this.upcComboBox.getSelectedItem();
         int numProduct = Integer.parseInt((String) this.quantityComboBox.getSelectedItem());
         System.out.println("selected upc");
-        productSpec = (ProductSpec)catalog.get(upc);
+        ProductSpec productSpec = (ProductSpec)catalog.get(upc);
         TransactionItem transItem = new TransactionItem(numProduct, upc, productSpec.getDescription(), productSpec.getPrice());
         String formatItem = invoiceTextArea.getSelectedText();
         formatItem += String.format("%-22s %5d %22.2f %22.2f\n",
@@ -368,7 +371,7 @@ public class PostGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_enterButtonMouseClicked
 
     private void payButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_payButtonMouseClicked
-        // TODO add your handling code here:
+
         if (paymentComboBox.getSelectedItem().toString().equals("Credit")){
             String creditNum = JOptionPane.showInputDialog(null, "Please enter your credit number", null);
             System.out.println(creditNum);
@@ -377,6 +380,10 @@ public class PostGUI extends javax.swing.JFrame {
             //print invoice;
         }
     }//GEN-LAST:event_payButtonMouseClicked
+
+    private void upcComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upcComboBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_upcComboBoxActionPerformed
 
     public static void createAndShow(final HashMap catalog) {
         /* Set the Nimbus look and feel */
