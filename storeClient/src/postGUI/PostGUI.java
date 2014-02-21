@@ -5,11 +5,9 @@
  */
 
 package postGUI;
-<<<<<<< HEAD
+
 import istore.IStore;
-=======
 import java.awt.Font;
->>>>>>> 552380df1f8c4055a68b53ef13c1e69584fd287f
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -46,14 +44,9 @@ public class PostGUI extends javax.swing.JFrame {
      */
     public PostGUI(IStore storeServer) throws RemoteException {
         initComponents();
-<<<<<<< HEAD
         this.catalog = storeServer.getProductCatalog();
         this.storeName = storeServer.getStoreName();
-=======
-        this.catalog = catalog;
-        
         invoiceTextArea.setFont(new Font("MONOSPACED", Font.PLAIN, 13));
->>>>>>> 552380df1f8c4055a68b53ef13c1e69584fd287f
         this.upcComboBox.removeAllItems();
         ArrayList upcList = new ArrayList(catalog.keySet());
         Collections.sort(upcList);
