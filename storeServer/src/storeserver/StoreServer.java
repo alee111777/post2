@@ -13,7 +13,6 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
-import post.Store;
 
 /**
  *
@@ -21,14 +20,25 @@ import post.Store;
  */
 public class StoreServer extends UnicastRemoteObject implements IStore {
 
-    public StoreServer() throws RemoteException {
+    private final Store store;
+    public StoreServer(Store store) throws RemoteException {
         super();
+        this.store = store;
         
     }
 
     @Override
     public HashMap getGroductCatalog() throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return store.getProductCatalog();
+    }
+    
+    /**
+     * for calling with a gui. manager opens gui
+     * to start new store
+     * @param store 
+     */
+    public static void startServer(Store store) {
+        
     }
 
     @Override
@@ -38,19 +48,21 @@ public class StoreServer extends UnicastRemoteObject implements IStore {
     
     public static void main(String args[]) throws IOException {
         try{
-            Registry reg = LocateRegistry.createRegistry(1099);
+
             System.out.println("building a new store"); 
             Store store = new Store();
         
             System.out.println("opening store with productCatalog.txt"
                 + ", manager \"Anthony\", and store name \"Ziga\"\n");
-                    store.open("productCatalog.txt", "Anthony", "Ziga");
+                store.open("productCatalog.txt", "Anthony", "Ziga");
         
-        
-//            System.out.println("\n\nClosing store.....");
-//            store.close();
-            reg.rebind("server", new StoreServer());
+            Registry reg = LocateRegistry.createRegistry(1099);
+            reg.rebind("server", new StoreServer(store));
             System.out.println("Server started");
+
+//              System.out.println("\n\nClosing store.....");
+//            store.close();
+
         } catch (RemoteException e) {
             System.out.println(e);
         }

@@ -5,12 +5,14 @@
  */
 
 package postGUI;
-import java.awt.Component;
+import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
-import javax.swing.text.JTextComponent;
-import post.Store;
+import storeserver.Store;
 import product.ProductSpec;
 import transaction.Transaction;
 import transaction.TransactionItem;
@@ -21,27 +23,28 @@ import transaction.TransactionItem;
  */
 public class PostGUI extends javax.swing.JFrame {
 
-    private Store store;
+    private HashMap catalog;
     private Transaction transaction;
     private ProductSpec productSpec;
     
     /**
      * Creates new form PostGUI
-     * @param store
+     * @param catalog HashMap
      */
-    public PostGUI(Store store) {
+    public PostGUI(HashMap catalog) {
         initComponents();
-        this.store = store;
-//        this.upcComboBox = new JComboBox(store.getUPCList());
-//        this.upcComboBox = new JComboBox();
-//        this.upcComboBox.removeAll();
-
+        this.catalog = catalog;
+//        this.upcComboBox = new JComboBox(catalog.getUPCList());
+//        //this.upcComboBox = new JComboBox();
+//        //this.upcComboBox.removeAll();
+//
 //        upcComboBox.addActionListener(upcComboBox);
-        
-        String[] upcList = store.getUPCList();
-        for (int i = 0; i < upcList.length; i++) {
-           upcComboBox.addItem(upcList[i]);
-        }
+//        
+//        String[] upcList = catalog.getUPCList();
+//        for (int i = 0; i < upcList.length; i++) {
+//           upcComboBox.addItem(upcList[i]);
+//           upcComboBox.getSelectedItem();
+//        }
         
         
         transaction = new Transaction();
@@ -342,7 +345,7 @@ public class PostGUI extends javax.swing.JFrame {
         String upc = (String) this.upcComboBox.getSelectedItem();
         int numProduct = Integer.parseInt((String) this.quantityComboBox.getSelectedItem());
         System.out.println("selected upc");
-        productSpec = store.getProductSpec(upc);
+        productSpec = (ProductSpec)catalog.get(upc);
         TransactionItem transItem = new TransactionItem(numProduct, upc, productSpec.getDescription(), productSpec.getPrice());
         String formatItem = invoiceTextArea.getSelectedText();
         formatItem += String.format("%-22s %5d %22.2f %22.2f\n",
@@ -375,7 +378,7 @@ public class PostGUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_payButtonMouseClicked
 
-    public static void createAndShow(final Store store) {
+    public static void createAndShow(final HashMap catalog) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -403,46 +406,64 @@ public class PostGUI extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new PostGUI(store).setVisible(true);
+                new PostGUI(catalog).setVisible(true);
             }
         });
     }
     
     
-//    /**
-//     * @param args the command line arguments
-//     */
-//    public static void main(String args[]) {
-//        /* Set the Nimbus look and feel */
-//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-//         */
-//        try {
-//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-//                if ("Nimbus".equals(info.getName())) {
-//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }
-//        } catch (ClassNotFoundException ex) {
-//            java.util.logging.Logger.getLogger(PostGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (InstantiationException ex) {
-//            java.util.logging.Logger.getLogger(PostGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (IllegalAccessException ex) {
-//            java.util.logging.Logger.getLogger(PostGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-//            java.util.logging.Logger.getLogger(PostGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        }
-//        //</editor-fold>
-//
-//        /* Create and display the form */
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                new PostGUI().setVisible(true);
-//            }
-//        });
-//    }
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(PostGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(PostGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(PostGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(PostGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                
+                System.out.println("building a new store"); 
+                Store store = new Store();
+                
+                System.out.println("opening store with productCatalog.txt"
+                        + ", manager \"Anthony\", and store name \"Ziga\"\n");
+                try {
+                    store.open("productCatalog.txt", "Anthony", "Ziga");
+                } catch (IOException ex) {
+                    Logger.getLogger(PostGUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
+        
+        
+        HashMap catalog = store.getProductCatalog();
+        new PostGUI(catalog).setVisible(true);
+//            System.out.println("\n\nClosing store.....");
+//            store.close();    
+                
+            }
+        });
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel amountLabel;

@@ -6,6 +6,7 @@
 
 package post;
 
+import storeserver.Store;
 import transaction.*;
 import java.util.ArrayList;
 import java.io.IOException;

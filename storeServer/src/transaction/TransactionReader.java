@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import payment.*;
-import post.Store;
+import storeserver.Store;
 import product.ProductSpec;
 
 

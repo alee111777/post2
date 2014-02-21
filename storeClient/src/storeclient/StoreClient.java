@@ -9,6 +9,8 @@ package storeclient;
 import istore.IStore;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.HashMap;
+import postGUI.PostGUI;
 
 /**
  *
@@ -16,22 +18,32 @@ import java.rmi.registry.Registry;
  */
 public class StoreClient {
 
+    
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        StoreClient post = new StoreClient();
+        PostGUI.createAndShow(post.getServerCatalog());
+     
     }
     
-    private void connectServer() {
+    /**
+     * open connection to store and get catalog
+     * @return 
+     */
+    private HashMap getServerCatalog() {
         try {
             Registry reg = LocateRegistry.getRegistry("127.0.0.1",1099);
             IStore storeServer = (IStore)reg.lookup("server");
-            //String text = storeServer.getData("Anthony");
-            //System.out.println(text);
+            return storeServer.getGroductCatalog();
+            
         } catch (Exception e) {
             System.out.println(e);
+            return null;
         }
     }
+    
+    
     
 }

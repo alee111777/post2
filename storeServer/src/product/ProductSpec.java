@@ -6,11 +6,13 @@
 
 package product;
 
+import java.io.Serializable;
+
 /**
  * ProductSpec holds info about a product
  * @author Team Ziga
  */
-public class ProductSpec {
+public class ProductSpec implements Serializable {
     
     String UPC;
     String description;
