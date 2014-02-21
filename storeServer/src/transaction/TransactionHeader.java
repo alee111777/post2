@@ -14,7 +14,7 @@ public class TransactionHeader {
     private String storeName;
     private String customerName;
     
-    TransactionHeader(String storeName, String customerName) {
+    public TransactionHeader(String storeName, String customerName) {
         this.storeName = storeName;
         this.customerName = customerName;
     }

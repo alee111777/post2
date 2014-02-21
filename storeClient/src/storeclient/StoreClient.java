@@ -11,6 +11,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.HashMap;
 import postGUI.PostGUI;
+import storeserver.StoreServer;
 
 /**
  *
@@ -24,7 +25,15 @@ public class StoreClient {
      */
     public static void main(String[] args) {
         StoreClient post = new StoreClient();
-        PostGUI.createAndShow(post.getServerCatalog());
+        try {
+            Registry reg = LocateRegistry.getRegistry("127.0.0.1",1098);
+            IStore storeServer = (IStore)reg.lookup("server");
+            PostGUI.createAndShow(storeServer);
+            
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        
      
     }
     
@@ -34,7 +43,7 @@ public class StoreClient {
      */
     private HashMap getServerCatalog() {
         try {
-            Registry reg = LocateRegistry.getRegistry("127.0.0.1",1099);
+            Registry reg = LocateRegistry.getRegistry("127.0.0.1",1098);
             IStore storeServer = (IStore)reg.lookup("server");
             return storeServer.getProductCatalog();
             

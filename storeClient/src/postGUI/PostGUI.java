@@ -5,7 +5,9 @@
  */
 
 package postGUI;
+import istore.IStore;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -13,10 +15,12 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import payment.*;
 import product.ProductSpec;
 import storeserver.Store;
 import transaction.Invoice;
 import transaction.Transaction;
+import transaction.TransactionHeader;
 import transaction.TransactionItem;
 
 /**
@@ -27,26 +31,31 @@ public class PostGUI extends javax.swing.JFrame {
 
     private HashMap catalog;
     private Transaction transaction;
+    private String storeName;
+    private IStore storeServer;
+    private ArrayList<Invoice> pendingInvoices;
     
     /**
      * Creates new form PostGUI
-     * @param catalog HashMap
+     * @param storeServer
+     * @throws java.rmi.RemoteException
      */
-    public PostGUI(HashMap catalog) {
+    public PostGUI(IStore storeServer) throws RemoteException {
         initComponents();
-        this.catalog = catalog;
-        
+        this.catalog = storeServer.getProductCatalog();
+        this.storeName = storeServer.getStoreName();
         this.upcComboBox.removeAllItems();
         ArrayList upcList = new ArrayList(catalog.keySet());
         Collections.sort(upcList);
         for (Object upc : upcList) {
             this.upcComboBox.addItem((String)upc);
         }
-        
-        
-        transaction = new Transaction();
+
         this.upcComboBox.setSelectedIndex(0);
         this.quantityComboBox.setSelectedIndex(0);
+        transaction = new Transaction();
+        pendingInvoices = new ArrayList<Invoice>();
+        this.storeServer = storeServer;
     }
 
    
@@ -356,20 +365,62 @@ public class PostGUI extends javax.swing.JFrame {
 
     private void payButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_payButtonMouseClicked
         String customerName = this.nameTextField.getText();
+        String ccNum = "";
+        ArrayList<String> params = new ArrayList<String>();
+        
         if (customerName == null) {
             //enter a prompt here. Please enter name
             return;
         }
+        
         String payType = paymentComboBox.getSelectedItem().toString();
-        if (payType.compareTo("Visa") == 0 
-                || payType.compareTo("Mastercard") == 0
-                || payType.compareTo("Cash") == 0
-                || payType.compareTo("Check") == 0 ){
-            String creditNum = JOptionPane.showInputDialog(null, "Please enter your credit number", null);
+        Payment payment = null;
+        try {
+            payment = (Payment)(Class.forName("payment." + payType + "Payment").newInstance());
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(PostGUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            Logger.getLogger(PostGUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            Logger.getLogger(PostGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (payment instanceof MastercardPayment 
+                || payment instanceof VisaPayment) {
+            ccNum = JOptionPane.showInputDialog(
+                    null, "Please enter your credit number", null);    
+            params.add(customerName);
+            params.add(ccNum);
+            payment.init(params);
+            
+        } else if (payment instanceof CheckPayment) {
+            params.add(customerName);
+            params.add(String.valueOf(this.transaction.getTotal()));
+            payment.init(params);
+        
+        } else if (payment instanceof CashPayment) {
+            params.add(customerName);
+            params.add(this.amountTextField.getText());
+            payment.init(params);
         }
         
+
+        
+        transaction.setPayment(payment);
+        TransactionHeader header = 
+                new TransactionHeader(this.storeName, customerName);
+        transaction.setTransHeader(header);
+        
         Invoice invoice = new Invoice(transaction);
-        //show dialog processing invoice. and print it
+        try {
+            this.storeServer.processInvoice(invoice);
+            
+            
+            
+            //show dialog processing invoice. and print it
+        } catch (RemoteException ex) {
+            //dialog to notify user that invoice still pending
+            this.pendingInvoices.add(invoice);
+        }
         
         
     }//GEN-LAST:event_payButtonMouseClicked
@@ -378,7 +429,7 @@ public class PostGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_upcComboBoxActionPerformed
 
-    public static void createAndShow(final HashMap catalog) {
+    public static void createAndShow(final IStore storeServer) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -406,7 +457,11 @@ public class PostGUI extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new PostGUI(catalog).setVisible(true);
+                try {
+                    new PostGUI(storeServer).setVisible(true);
+                } catch (RemoteException ex) {
+                    Logger.getLogger(PostGUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
@@ -458,13 +513,15 @@ public class PostGUI extends javax.swing.JFrame {
         
         
         HashMap catalog = store.getProductCatalog();
-        new PostGUI(catalog).setVisible(true);
+//        new PostGUI(catalog).setVisible(true);
 //            System.out.println("\n\nClosing store.....");
 //            store.close();    
                 
             }
         });
     }
+    
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel amountLabel;

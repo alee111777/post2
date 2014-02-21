@@ -18,6 +18,7 @@ import transaction.Invoice;
 public interface IStore extends Remote {
     public HashMap getProductCatalog() throws RemoteException;
     public boolean processInvoice(Invoice invoice) throws RemoteException;
+    public String getStoreName() throws RemoteException;
 }
 
 
