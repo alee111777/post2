@@ -6,13 +6,14 @@
 
 package payment;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * This is the abstract class for all payment types
  * @author Team Ziga
  */
-public abstract class Payment {
+public abstract class Payment implements Serializable {
     
     /**
      * initialize variables in payment

@@ -371,8 +371,8 @@ public class PostGUI extends javax.swing.JFrame {
         String ccNum = "";
         ArrayList<String> params = new ArrayList<String>();
         
-        if (customerName == null) {
-            //enter a prompt here. Please enter name
+        if (customerName.compareTo("") == 0) {
+            JOptionPane.showMessageDialog(this, "Please enter your name.");
             return;
         }
         
@@ -416,12 +416,9 @@ public class PostGUI extends javax.swing.JFrame {
         Invoice invoice = new Invoice(transaction);
         try {
             this.storeServer.processInvoice(invoice);
-            
-            
-            
-            //show dialog processing invoice. and print it
+            JOptionPane.showMessageDialog(this, "Payment processed");
         } catch (RemoteException ex) {
-            //dialog to notify user that invoice still pending
+            JOptionPane.showMessageDialog(this, ex.toString() + "\nServer not available. Payment still pending");
             this.pendingInvoices.add(invoice);
         }
         

@@ -6,11 +6,13 @@
 
 package transaction;
 
+import java.io.Serializable;
+
 /**
  *  items within a transaction
  * @author Team Ziga
  */
-public class TransactionItem {
+public class TransactionItem implements Serializable {
     
     private int quantity;
     private String upc;

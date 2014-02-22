@@ -6,6 +6,7 @@
 
 package transaction;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import payment.Payment;
 
@@ -14,7 +15,7 @@ import payment.Payment;
  * Transactions for the store
  * @author Team Ziga
  */
-public class Transaction {
+public class Transaction implements Serializable {
     private TransactionHeader header;
     private ArrayList<TransactionItem> transItems;
     private int numTransItems;
