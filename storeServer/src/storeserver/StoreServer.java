@@ -56,7 +56,7 @@ public class StoreServer extends UnicastRemoteObject implements IStore {
     
     public static void main(String args[]) throws IOException {
         try{
-            
+
             System.out.println("building a new store"); 
             Store store = new Store();
         

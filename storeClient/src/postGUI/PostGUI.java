@@ -409,21 +409,21 @@ public class PostGUI extends javax.swing.JFrame {
         } catch (IllegalAccessException ex) {
             Logger.getLogger(PostGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
+        params.add(customerName);
         if (payment instanceof MastercardPayment 
                 || payment instanceof VisaPayment) {
             ccNum = JOptionPane.showInputDialog(
                     null, "Please enter your credit number", null);    
-            params.add(customerName);
+            
             params.add(ccNum);
             payment.init(params);
             
         } else if (payment instanceof CheckPayment) {
-            params.add(customerName);
+ 
             params.add(String.valueOf(this.transaction.getTotal()));
             payment.init(params);
         
         } else if (payment instanceof CashPayment) {
-            params.add(customerName);
             String amount = this.amountTextField.getText(); 
             try {
                 Double.parseDouble(amount);
@@ -431,7 +431,7 @@ public class PostGUI extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Please enter a valid amount");
                 return;
             }
-            
+            params.add(amount);
             payment.init(params);
         }
         
