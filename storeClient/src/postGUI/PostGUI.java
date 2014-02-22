@@ -18,6 +18,7 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 import payment.*;
 import product.ProductSpec;
 import storeserver.Store;
@@ -63,6 +64,19 @@ public class PostGUI extends javax.swing.JFrame {
         pendingInvoices = new ArrayList<Invoice>();
         this.storeServer = storeServer;
     }
+    
+    public void reset() {
+        
+        transaction = new Transaction();
+        this.totalAmount.setText("");
+        this.nameTextField.setText("");
+        this.amountTextField.setText("");
+        this.upcComboBox.setSelectedIndex(0);
+        this.quantityComboBox.setSelectedIndex(0);
+        this.paymentComboBox.setSelectedIndex(0);
+        this.invoiceTextArea.setText("");
+        this.repaint();
+    }
 
    
     /**
@@ -105,7 +119,7 @@ public class PostGUI extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("POST Terminal");
 
-        nameLabel.setText("Custome Name");
+        nameLabel.setText("Customer Name");
 
         nameTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -432,15 +446,20 @@ public class PostGUI extends javax.swing.JFrame {
         try {
             this.storeServer.processInvoice(invoice);
             JOptionPane.showMessageDialog(this, "Payment processed");
-            JOptionPane.showMessageDialog(this, invoice.toString());
+            JTextArea customFontText = new JTextArea();
+            customFontText.setFont (new Font ("MONOSPACED", Font.PLAIN, 13));
+            customFontText.setText(invoice.toString());
+            JOptionPane.showMessageDialog(this, customFontText);
         } catch (RemoteException ex) {
             JOptionPane.showMessageDialog(this, "\nServer not available. "
                     + "Payment still pending. Will be proccessed later.");
             this.pendingInvoices.add(invoice);
+            JTextArea customFontText = new JTextArea();
+            customFontText.setFont (new Font ("MONOSPACED", Font.PLAIN, 13));
+            customFontText.setText(invoice.toString());
             JOptionPane.showMessageDialog(this, invoice.toString());
         }
-        
-        
+        reset();
     }//GEN-LAST:event_payButtonMouseClicked
 
     private void upcComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upcComboBoxActionPerformed

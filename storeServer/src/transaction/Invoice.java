@@ -53,17 +53,16 @@ public class Invoice implements Serializable {
     @Override
     public String toString() {
         String invoiceString = "Store: " + transaction.getTransHeader().getStoreName() + "\n\n"
-                + "Customer Name: " + transaction.getTransHeader().getCustomerName()+ "    " 
-                + "getDateTime" + "\n\n";
+                + "Customer Name: " + transaction.getTransHeader().getCustomerName()+ "       " 
+                + getDateTime() + "\n\n";
         
-        invoiceString += String.format("%-22s %5s %22s %22s\n",
+        invoiceString += String.format("%-22s\t %5s\t %14s\t %15s\n",
                 "Item", "QTY", "UNIT_PRICE", "EXTENDED_PRICE");
-        invoiceString += String.format("%-22s %5s %22s %22s\n",
-                "----", "---", "----------", "--------------");
+        invoiceString += "----------------------------------------------------------------\n";
         ArrayList<TransactionItem> transactionItems = transaction.getTransItems();
         for(int i = 0; i < transactionItems.size(); i++) {
             TransactionItem item = transactionItems.get(i);
-            String formatItem = String.format("%-22s %5d %22.2f %22.2f\n",
+            String formatItem = String.format("%-22s\t %5d\t %14.2f\t %15.2f\n",
                     item.getName(), item.getQuantity(), item.getUnitPrice(), item.getExtendedPrice());
             invoiceString += formatItem;
         }
