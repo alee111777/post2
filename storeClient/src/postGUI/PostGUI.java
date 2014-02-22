@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -47,13 +48,15 @@ public class PostGUI extends javax.swing.JFrame {
         this.catalog = storeServer.getProductCatalog();
         this.storeName = storeServer.getStoreName();
         invoiceTextArea.setFont(new Font("MONOSPACED", Font.PLAIN, 13));
+        
+        //set up upc combobox
         this.upcComboBox.removeAllItems();
         ArrayList upcList = new ArrayList(catalog.keySet());
         Collections.sort(upcList);
         for (Object upc : upcList) {
             this.upcComboBox.addItem((String)upc);
         }
-
+        
         this.upcComboBox.setSelectedIndex(0);
         this.quantityComboBox.setSelectedIndex(0);
         transaction = new Transaction();
@@ -417,9 +420,12 @@ public class PostGUI extends javax.swing.JFrame {
         try {
             this.storeServer.processInvoice(invoice);
             JOptionPane.showMessageDialog(this, "Payment processed");
+            JOptionPane.showMessageDialog(this, invoice.toString());
         } catch (RemoteException ex) {
-            JOptionPane.showMessageDialog(this, ex.toString() + "\nServer not available. Payment still pending");
+            JOptionPane.showMessageDialog(this, "\nServer not available. "
+                    + "Payment still pending. Will be proccessed later.");
             this.pendingInvoices.add(invoice);
+            JOptionPane.showMessageDialog(this, invoice.toString());
         }
         
         
