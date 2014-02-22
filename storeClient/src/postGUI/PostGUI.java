@@ -379,6 +379,11 @@ public class PostGUI extends javax.swing.JFrame {
             return;
         }
         
+        if (transaction.getTransItems().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please add some items to pay for first.");
+            return;
+        }
+        
         String payType = paymentComboBox.getSelectedItem().toString();
         Payment payment = null;
         try {
@@ -405,7 +410,14 @@ public class PostGUI extends javax.swing.JFrame {
         
         } else if (payment instanceof CashPayment) {
             params.add(customerName);
-            params.add(this.amountTextField.getText());
+            String amount = this.amountTextField.getText(); 
+            try {
+                Double.parseDouble(amount);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Please enter a valid amount");
+                return;
+            }
+            
             payment.init(params);
         }
         
