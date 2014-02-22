@@ -67,9 +67,13 @@ public class PostGUI extends javax.swing.JFrame {
     public void reset() {
         
         transaction = new Transaction();
+        this.totalAmount.setText("");
+        this.nameTextField.setText("");
+        this.amountTextField.setText("");
         this.upcComboBox.setSelectedIndex(0);
         this.quantityComboBox.setSelectedIndex(0);
-        invoiceTextArea.setText("");
+        this.invoiceTextArea.setText("");
+        this.repaint();
     }
 
    
@@ -113,7 +117,7 @@ public class PostGUI extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("POST Terminal");
 
-        nameLabel.setText("Custome Name");
+        nameLabel.setText("Customer Name");
 
         nameTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -435,7 +439,7 @@ public class PostGUI extends javax.swing.JFrame {
             this.pendingInvoices.add(invoice);
             JOptionPane.showMessageDialog(this, invoice.toString());
         }
-        
+        reset();
     }//GEN-LAST:event_payButtonMouseClicked
 
     private void upcComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upcComboBoxActionPerformed

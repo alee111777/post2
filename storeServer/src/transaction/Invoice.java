@@ -54,7 +54,7 @@ public class Invoice implements Serializable {
     public String toString() {
         String invoiceString = "Store: " + transaction.getTransHeader().getStoreName() + "\n\n"
                 + "Customer Name: " + transaction.getTransHeader().getCustomerName()+ "    " 
-                + "getDateTime" + "\n\n";
+                + getDateTime() + "\n\n";
         
         invoiceString += String.format("%-22s %5s %22s %22s\n",
                 "Item", "QTY", "UNIT_PRICE", "EXTENDED_PRICE");
