@@ -63,7 +63,7 @@ public class StoreServer extends UnicastRemoteObject implements IStore {
                 + ", manager \"Anthony\", and store name \"Ziga\"\n");
                 store.open("productCatalog.txt", "Anthony", "Ziga");
         
-            Registry reg = LocateRegistry.createRegistry(1099);
+            Registry reg = LocateRegistry.createRegistry(1098);
             reg.rebind("server", new StoreServer(store));
             System.out.println("Server started");
 

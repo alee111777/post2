@@ -50,6 +50,14 @@ public class PostGUI extends javax.swing.JFrame {
         this.upcComboBox.setSelectedIndex(0);
         this.quantityComboBox.setSelectedIndex(0);
     }
+    
+    public void reset() {
+        
+        transaction = new Transaction();
+        this.upcComboBox.setSelectedIndex(0);
+        this.quantityComboBox.setSelectedIndex(0);
+        invoiceTextArea.setText("");
+    }
 
    
     /**
@@ -372,7 +380,6 @@ public class PostGUI extends javax.swing.JFrame {
         
         Invoice invoice = new Invoice(transaction);
         //show dialog processing invoice. and print it
-        
         
     }//GEN-LAST:event_payButtonMouseClicked
 

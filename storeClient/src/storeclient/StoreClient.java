@@ -34,7 +34,7 @@ public class StoreClient {
      */
     private HashMap getServerCatalog() {
         try {
-            Registry reg = LocateRegistry.getRegistry("127.0.0.1",1099);
+            Registry reg = LocateRegistry.getRegistry("127.0.0.1",1098);
             IStore storeServer = (IStore)reg.lookup("server");
             return storeServer.getProductCatalog();
             
