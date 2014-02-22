@@ -1,5 +1,6 @@
 package transaction;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import payment.*;
  * Invoice for transactions
  * @author Team Ziga
  */
-public class Invoice {
+public class Invoice implements Serializable {
     private double amountTendered;
     private double amountReturned;
     private Transaction transaction;

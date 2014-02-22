@@ -6,15 +6,17 @@
 
 package transaction;
 
+import java.io.Serializable;
+
 /**
  *  holds header for transactions
  * @author Team Ziga
  */
-public class TransactionHeader {
+public class TransactionHeader implements Serializable {
     private String storeName;
     private String customerName;
     
-    TransactionHeader(String storeName, String customerName) {
+    public TransactionHeader(String storeName, String customerName) {
         this.storeName = storeName;
         this.customerName = customerName;
     }

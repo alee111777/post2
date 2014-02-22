@@ -15,6 +15,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import transaction.Invoice;
 import transaction.Transaction;
 
 /**
@@ -40,7 +41,7 @@ public class StoreServer extends UnicastRemoteObject implements IStore {
     }
 
     @Override
-    public boolean processInvoice(transaction.Invoice invoice) throws RemoteException {
+    public boolean processInvoice(Invoice invoice) throws RemoteException {
         Transaction transaction = invoice.getTransaction();
         try {
             Post post = new Post(this.store, transaction.getTransHeader().getCustomerName());
@@ -55,7 +56,7 @@ public class StoreServer extends UnicastRemoteObject implements IStore {
     
     public static void main(String args[]) throws IOException {
         try{
-
+            
             System.out.println("building a new store"); 
             Store store = new Store();
         
@@ -78,6 +79,11 @@ public class StoreServer extends UnicastRemoteObject implements IStore {
     @Override
     public HashMap getProductCatalog() throws RemoteException {
         return store.getProductCatalog();
+    }
+
+    @Override
+    public String getStoreName() throws RemoteException {
+        return store.getName();
     }
     
 }
