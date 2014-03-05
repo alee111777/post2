@@ -27,7 +27,32 @@ public class ProductPanel extends javax.swing.JPanel {
     public ProductPanel() {
         initComponents();
     }
-
+    
+    public void reset() {
+        
+        this.upcComboBox.setSelectedIndex(0);
+        this.quantityComboBox.setSelectedIndex(0);
+        this.repaint();
+    }
+    public void setSelectedIndexUPC(int index)
+    {
+        this.upcComboBox.setSelectedIndex(index);
+    }
+    
+    public void setSelectedIndexQuantity(int index)
+    {
+        this.quantityComboBox.setSelectedIndex(index);
+    }
+    
+    public void removeAllItems()
+    {
+        this.upcComboBox.removeAllItems();
+    }
+    
+    public void addItem(String upc)
+    {
+        this.upcComboBox.addItem(upc);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

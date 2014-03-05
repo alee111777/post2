@@ -34,7 +34,7 @@ import transaction.TransactionItem;
 public class PostGUI extends javax.swing.JFrame {
 
     private HashMap catalog;
-    private Transaction transaction;
+    public Transaction transaction;
     private String storeName;
     private IStore storeServer;
     private ArrayList<Invoice> pendingInvoices;
@@ -48,33 +48,44 @@ public class PostGUI extends javax.swing.JFrame {
         initComponents();
         this.catalog = storeServer.getProductCatalog();
         this.storeName = storeServer.getStoreName();
-        invoiceTextArea.setFont(new Font("MONOSPACED", Font.PLAIN, 13));
+        //invoiceTextArea.setFont(new Font("MONOSPACED", Font.PLAIN, 13));
         
         //set up upc combobox
-        this.upcComboBox.removeAllItems();
+        //this.upcComboBox.removeAllItems();
+        productPanel.removeAllItems();
         ArrayList upcList = new ArrayList(catalog.keySet());
         Collections.sort(upcList);
         for (Object upc : upcList) {
-            this.upcComboBox.addItem((String)upc);
+            //this.upcComboBox.addItem((String)upc);
+            productPanel.addItem((String)upc);
         }
         
-        this.upcComboBox.setSelectedIndex(0);
-        this.quantityComboBox.setSelectedIndex(0);
+        //this.upcComboBox.setSelectedIndex(0);
+        productPanel.setSelectedIndexUPC(0);
+        //this.quantityComboBox.setSelectedIndex(0);
+        productPanel.setSelectedIndexQuantity(0);
         transaction = new Transaction();
         pendingInvoices = new ArrayList<Invoice>();
         this.storeServer = storeServer;
     }
     
+    public Transaction getTransaction()
+    {
+        return this.transaction;
+    }
+    
     public void reset() {
         
         transaction = new Transaction();
-        this.totalAmount.setText("");
         this.nameTextField.setText("");
         this.amountTextField.setText("");
-        this.upcComboBox.setSelectedIndex(0);
-        this.quantityComboBox.setSelectedIndex(0);
+        //this.upcComboBox.setSelectedIndex(0);
+        //this.quantityComboBox.setSelectedIndex(0);
         this.paymentComboBox.setSelectedIndex(0);
-        this.invoiceTextArea.setText("");
+        //this.totalAmount.setText("");
+        //this.invoiceTextArea.setText("");
+        invoicePanel.reset();
+        productPanel.reset();
         this.repaint();
     }
 
@@ -91,22 +102,7 @@ public class PostGUI extends javax.swing.JFrame {
         namePanel = new javax.swing.JPanel();
         nameLabel = new javax.swing.JLabel();
         nameTextField = new javax.swing.JTextField();
-        productPanel = new javax.swing.JPanel();
-        upcLabel = new javax.swing.JLabel();
-        String[] items= {"0000","0001","0002"};
-        upcComboBox = new javax.swing.JComboBox();
-        quantityLabel = new javax.swing.JLabel();
-        quantityComboBox = new javax.swing.JComboBox();
-        enterButton = new javax.swing.JButton();
-        invoicePanel = new javax.swing.JPanel();
-        itemLabel = new javax.swing.JLabel();
-        qtyLabel = new javax.swing.JLabel();
-        uPriceLabel = new javax.swing.JLabel();
-        ePriceLabel = new javax.swing.JLabel();
-        totalLabel = new javax.swing.JLabel();
-        totalAmount = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        invoiceTextArea = new javax.swing.JTextArea();
+        productPanel = new postGUI.ProductPanel();
         paymentPanel = new javax.swing.JPanel();
         paymentLabel = new javax.swing.JLabel();
         paymentComboBox = new javax.swing.JComboBox();
@@ -115,9 +111,12 @@ public class PostGUI extends javax.swing.JFrame {
         payButton = new javax.swing.JButton();
         timePanel = new javax.swing.JPanel();
         currentTime = new javax.swing.JLabel(""+ new Date());
+        invoicePanel = new postGUI.InvoicePanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("POST Terminal");
+
+        namePanel.setFocusable(false);
 
         nameLabel.setText("Customer Name");
 
@@ -136,7 +135,9 @@ public class PostGUI extends javax.swing.JFrame {
                 .addComponent(nameLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(nameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(productPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         namePanelLayout.setVerticalGroup(
             namePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -146,123 +147,9 @@ public class PostGUI extends javax.swing.JFrame {
                     .addComponent(nameLabel)
                     .addComponent(nameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        productPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)), "Product", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP));
-
-        upcLabel.setText("UPC");
-
-        for (int i = 0; i<items.length;i++){
-            upcComboBox.addItem(items[i]);
-        }
-        upcComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                upcComboBoxActionPerformed(evt);
-            }
-        });
-
-        quantityLabel.setText("Quantity");
-
-        quantityComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" }));
-
-        enterButton.setText("ENTER");
-        enterButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                enterButtonMouseClicked(evt);
-            }
-        });
-
-        javax.swing.GroupLayout productPanelLayout = new javax.swing.GroupLayout(productPanel);
-        productPanel.setLayout(productPanelLayout);
-        productPanelLayout.setHorizontalGroup(
-            productPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(productPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(upcLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(upcComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(quantityLabel)
-                .addGap(18, 18, 18)
-                .addComponent(quantityComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-            .addGroup(productPanelLayout.createSequentialGroup()
-                .addGap(87, 87, 87)
-                .addComponent(enterButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        productPanelLayout.setVerticalGroup(
-            productPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(productPanelLayout.createSequentialGroup()
-                .addContainerGap(13, Short.MAX_VALUE)
-                .addGroup(productPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(upcLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(upcComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(quantityLabel)
-                    .addComponent(quantityComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(enterButton)
-                .addGap(4, 4, 4))
-        );
-
-        invoicePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)), "Invoice", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP));
-
-        itemLabel.setText("ITEM");
-
-        qtyLabel.setText("QTY");
-
-        uPriceLabel.setText("UNIT_PRICE");
-
-        ePriceLabel.setText("EXTENDED_PRICE");
-
-        totalLabel.setText("TOTAL");
-
-        totalAmount.setText("$0");
-
-        invoiceTextArea.setColumns(20);
-        invoiceTextArea.setRows(5);
-        jScrollPane1.setViewportView(invoiceTextArea);
-
-        javax.swing.GroupLayout invoicePanelLayout = new javax.swing.GroupLayout(invoicePanel);
-        invoicePanel.setLayout(invoicePanelLayout);
-        invoicePanelLayout.setHorizontalGroup(
-            invoicePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(invoicePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(invoicePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(invoicePanelLayout.createSequentialGroup()
-                        .addComponent(jScrollPane1)
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, invoicePanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(totalLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(totalAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(39, 39, 39))
-                    .addGroup(invoicePanelLayout.createSequentialGroup()
-                        .addComponent(itemLabel)
-                        .addGap(205, 205, 205)
-                        .addComponent(qtyLabel)
-                        .addGap(53, 53, 53)
-                        .addComponent(uPriceLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(ePriceLabel)
-                        .addGap(18, 18, 18))))
-        );
-        invoicePanelLayout.setVerticalGroup(
-            invoicePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-            .addGroup(invoicePanelLayout.createSequentialGroup()
-                .addGroup(invoicePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(itemLabel)
-                    .addComponent(qtyLabel)
-                    .addComponent(uPriceLabel)
-                    .addComponent(ePriceLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(invoicePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(totalLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)
-                    .addComponent(totalAmount, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, namePanelLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(productPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         paymentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)), "Payment", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP));
@@ -319,7 +206,7 @@ public class PostGUI extends javax.swing.JFrame {
             .addGroup(timePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(currentTime, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(48, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         timePanelLayout.setVerticalGroup(
             timePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -341,18 +228,17 @@ public class PostGUI extends javax.swing.JFrame {
                         .addComponent(paymentPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(namePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(productPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(invoicePanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(invoicePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(productPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(namePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                .addComponent(namePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
                 .addComponent(invoicePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -366,22 +252,6 @@ public class PostGUI extends javax.swing.JFrame {
     private void nameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nameTextFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_nameTextFieldActionPerformed
-
-    private void enterButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_enterButtonMouseClicked
-        String upc = (String) this.upcComboBox.getSelectedItem();
-        ProductSpec productSpec = (ProductSpec)catalog.get(upc);
-        TransactionItem transItem = new TransactionItem(Integer.parseInt((String) this.quantityComboBox.getSelectedItem()), 
-                upc, productSpec.getDescription(), productSpec.getPrice());
-        
-        String formatItem = String.format("%-22s\t %5d\t %14.2f\t\t %15.2f\n",
-                transItem.getName(), transItem.getQuantity(), transItem.getUnitPrice(), transItem.getExtendedPrice());
-        invoiceTextArea.append(formatItem);
-        transaction.addTransItem(transItem);
-        
-        totalAmount.setText("$" + String.valueOf(transaction.getTotal()) + "0");
-        
-        this.repaint();
-    }//GEN-LAST:event_enterButtonMouseClicked
 
     private void payButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_payButtonMouseClicked
         String customerName = this.nameTextField.getText();
@@ -461,10 +331,6 @@ public class PostGUI extends javax.swing.JFrame {
         }
         reset();
     }//GEN-LAST:event_payButtonMouseClicked
-
-    private void upcComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upcComboBoxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_upcComboBoxActionPerformed
 
     public static void createAndShow(final IStore storeServer) {
         /* Set the Nimbus look and feel */
@@ -564,12 +430,7 @@ public class PostGUI extends javax.swing.JFrame {
     private javax.swing.JLabel amountLabel;
     private javax.swing.JTextField amountTextField;
     private javax.swing.JLabel currentTime;
-    private javax.swing.JLabel ePriceLabel;
-    private javax.swing.JButton enterButton;
-    private javax.swing.JPanel invoicePanel;
-    private javax.swing.JTextArea invoiceTextArea;
-    private javax.swing.JLabel itemLabel;
-    private javax.swing.JScrollPane jScrollPane1;
+    private postGUI.InvoicePanel invoicePanel;
     private javax.swing.JLabel nameLabel;
     private javax.swing.JPanel namePanel;
     private javax.swing.JTextField nameTextField;
@@ -577,15 +438,7 @@ public class PostGUI extends javax.swing.JFrame {
     private javax.swing.JComboBox paymentComboBox;
     private javax.swing.JLabel paymentLabel;
     private javax.swing.JPanel paymentPanel;
-    private javax.swing.JPanel productPanel;
-    private javax.swing.JLabel qtyLabel;
-    private javax.swing.JComboBox quantityComboBox;
-    private javax.swing.JLabel quantityLabel;
+    private postGUI.ProductPanel productPanel;
     private javax.swing.JPanel timePanel;
-    private javax.swing.JLabel totalAmount;
-    private javax.swing.JLabel totalLabel;
-    private javax.swing.JLabel uPriceLabel;
-    private javax.swing.JComboBox upcComboBox;
-    private javax.swing.JLabel upcLabel;
     // End of variables declaration//GEN-END:variables
 }
