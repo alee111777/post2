@@ -8,6 +8,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Scanner;
 import transaction.Invoice;
 
 /**
@@ -44,15 +45,21 @@ public class StoreServer extends UnicastRemoteObject implements IStore {
             Registry reg = LocateRegistry.createRegistry(1098);
             reg.rebind("server", new StoreServer(store));
             System.out.println("Server started");
-
-//              System.out.println("\n\nClosing store.....");
-//            store.close();
+            
+            System.out.println("press enter to shut down the server.");
+            Scanner scanner = new Scanner(System.in);
+            scanner.nextLine();
+            System.out.println("\n\nClosing store.....");
+            store.close();
+            System.exit(0);
 
         } catch (RemoteException e) {
             System.out.println(e);
         }
     }
 
+
+    
     @Override
     public Store getStore() {
        return this.store;
