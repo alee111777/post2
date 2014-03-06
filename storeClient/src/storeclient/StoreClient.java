@@ -9,9 +9,8 @@ package storeclient;
 import istore.IStore;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.HashMap;
 import postGUI.PostGUI;
-import storeserver.StoreServer;
+import storeserver.Store;
 
 /**
  *
@@ -41,11 +40,11 @@ public class StoreClient {
      * open connection to store and get catalog
      * @return 
      */
-    private HashMap getServerCatalog() {
+    private Store getServerStore() {
         try {
             Registry reg = LocateRegistry.getRegistry("127.0.0.1",1098);
             IStore storeServer = (IStore)reg.lookup("server");
-            return storeServer.getProductCatalog();
+            return storeServer.getStore();
             
         } catch (Exception e) {
             System.out.println(e);

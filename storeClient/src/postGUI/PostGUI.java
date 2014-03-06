@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package postGUI;
 
@@ -21,6 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import payment.*;
 import product.ProductSpec;
+import storeclient.Post;
 import storeserver.Store;
 import transaction.Invoice;
 import transaction.Transaction;
@@ -34,13 +30,14 @@ import transaction.TransactionItem;
 public class PostGUI extends javax.swing.JFrame {
 
     private HashMap catalog;
-    public Transaction transaction;
-    private String storeName;
+    private Transaction transaction;
+    private Store store;
     private IStore storeServer;
     private ArrayList<Invoice> pendingInvoices;
     private String[] items; //read through rmi
     private ProductChangeListener productPanelListner;
     private PayChangeListener paymentPanelListner;
+    private Post post;
     
     /**
      * Creates new form PostGUI
@@ -48,8 +45,10 @@ public class PostGUI extends javax.swing.JFrame {
      * @throws java.rmi.RemoteException
      */
     public PostGUI(IStore storeServer) throws RemoteException {
-        this.catalog = storeServer.getProductCatalog();
-        this.storeName = storeServer.getStoreName();
+        
+        this.store = storeServer.getStore();
+        this.catalog = store.getProductCatalog();
+        this.post = new Post();
         ArrayList upcList = new ArrayList(catalog.keySet());
         Collections.sort(upcList);
         items = new String[upcList.size()];
@@ -162,11 +161,11 @@ public class PostGUI extends javax.swing.JFrame {
 
                     transaction.setPayment(payment);
                     TransactionHeader header =
-                            new TransactionHeader(storeName, customerName);
+                            new TransactionHeader(store.getName(), customerName);
                     transaction.setTransHeader(header);
-
                     Invoice invoice = new Invoice(transaction);
                     try {
+                        post.processTransaction(transaction);
                         storeServer.processInvoice(invoice);
                         JOptionPane.showMessageDialog(null, "Payment processed");
                         JTextArea customFontText = new JTextArea();

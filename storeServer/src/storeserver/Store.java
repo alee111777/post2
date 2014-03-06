@@ -6,10 +6,10 @@
 
 package storeserver;
 import transaction.Invoice;
-import transaction.Transaction;
 import product.ProductSpec;
 import product.ProductReader;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 import payment.Payment;
 
@@ -19,11 +19,10 @@ import payment.Payment;
  * for which transactions and records are created
  * @author Team Ziga
  */
-public class Store {
+public class Store implements Serializable {
     
     //Products by UPC code
-    private static HashMap<String,ProductSpec> productCatalog = new HashMap();
-    private ArrayList<Transaction> dailyTransactions;
+    private HashMap<String,ProductSpec> productCatalog = new HashMap();
     private Double dailyTotalPayments;
     private String storeName;
     private ArrayList<Invoice> dailyInvoices;
@@ -53,29 +52,6 @@ public class Store {
      */
     public void close() {
         
-    }
-    
-//    /**
-//     * given a file name and customer name, the transactions in the file
-//     * will be processed.
-//     * @param fileName String
-//     * @param customerName String
-//     * @return ArrayList<Invoices> invoices for the transactions
-//     * @throws IOException 
-//     */
-//    public ArrayList<Invoice> processTransactionFile(String fileName, String customerName) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
-//        Post post = new Post(this, customerName);
-//        return post.processTransactionFile(fileName);
-//    }
-    
-    /**
-     * add a transaction to the store's record of daily transactions
-     * @param transaction
-     * @return true if success
-     */
-    public boolean addDailyTransaction(Transaction transaction) {
-        dailyTransactions.add(transaction);
-        return true;
     }
     
     /**
@@ -109,27 +85,6 @@ public class Store {
        return upcList;
    }
    
-   
-//    /**
-//     * get product price by upc code
-//     * @param upc
-//     * @return double the rice
-//     */
-//    public double getProductPrice(String upc) {
-//        ProductSpec product = productCatalog.get(upc);
-//        return product.getPrice();
-//    }
-//    
-//    /**
-//     * get product description by upc code
-//     * @param upc
-//     * @return String description
-//     */
-//    public String getProductDescription(String upc) {
-//        ProductSpec product = productCatalog.get(upc);
-//        return product.getDescription();
-//    }
-    
     /**
      * get store name
      * @return String

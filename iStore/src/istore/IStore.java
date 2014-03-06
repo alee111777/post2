@@ -8,7 +8,7 @@ package istore;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.HashMap;
+import storeserver.Store;
 import transaction.Invoice;
 
 /**
@@ -16,9 +16,8 @@ import transaction.Invoice;
  * @author anthony
  */
 public interface IStore extends Remote {
-    public HashMap getProductCatalog() throws RemoteException;
+    public Store getStore() throws RemoteException;
     public boolean processInvoice(Invoice invoice) throws RemoteException;
-    public String getStoreName() throws RemoteException;
 }
 
 
