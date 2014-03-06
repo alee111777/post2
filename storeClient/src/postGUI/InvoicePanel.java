@@ -20,14 +20,11 @@ public class InvoicePanel extends javax.swing.JPanel {
     /**
      * Creates new form InvoicePanel
      */
-
-    
     private PropertyChangeSupport pcs;
     public InvoicePanel() {
         JPanel panel = new JPanel();
         initComponents();
         invoiceTextArea.setFont(new Font("MONOSPACED", Font.PLAIN, 13));
-
     }
     
     public void setTotalAmount (String total) {

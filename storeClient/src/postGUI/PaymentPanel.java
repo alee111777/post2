@@ -6,34 +6,14 @@
 
 package postGUI;
 
-import istore.IStore;
-import java.awt.Font;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
-import payment.CashPayment;
-import payment.CheckPayment;
-import payment.MastercardPayment;
-import payment.Payment;
-import payment.VisaPayment;
-import transaction.Invoice;
-import transaction.Transaction;
-import transaction.TransactionHeader;
 
 /**
  *
  * @author Michael
  */
 public class PaymentPanel extends javax.swing.JPanel {
-    
-    private Transaction transaction;
-    private String storeName;
-    private IStore storeServer;
     private boolean payClicked = false;
     
     private PropertyChangeSupport pcs;
@@ -121,102 +101,27 @@ public class PaymentPanel extends javax.swing.JPanel {
             .addComponent(paymentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
-public void reset() {
+    public void reset() {
         
         this.amountTextField.setText("");
         this.paymentComboBox.setSelectedIndex(0);
-}
+    }
     private void payButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_payButtonMouseClicked
         boolean oldClicked = payClicked;
         payClicked = true;
-        //System.out.println("clicked");
         pcs.firePropertyChange("payClicked", oldClicked, payClicked);
         payClicked = false;
-        /*String customerName = this.nameTextField.getText();
-        String ccNum = "";
-        ArrayList<String> params = new ArrayList<String>();
-
-        if (customerName.compareTo("") == 0) {
-            JOptionPane.showMessageDialog(this, "Please enter your name.");
-            return;
-        }
-
-        if (transaction.getTransItems().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please add some items to pay for first.");
-            return;
-        }
-
-        String payType = paymentComboBox.getSelectedItem().toString();
-        Payment payment = null;
-        try {
-            payment = (Payment)(Class.forName("payment." + payType + "Payment").newInstance());
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(PostGUI.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            Logger.getLogger(PostGUI.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            Logger.getLogger(PostGUI.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        params.add(customerName);
-        if (payment instanceof MastercardPayment
-            || payment instanceof VisaPayment) {
-            ccNum = JOptionPane.showInputDialog(
-                null, "Please enter your credit number", null);
-
-            params.add(ccNum);
-            payment.init(params);
-
-        } else if (payment instanceof CheckPayment) {
-
-            params.add(String.valueOf(this.transaction.getTotal()));
-            payment.init(params);
-
-        } else if (payment instanceof CashPayment) {
-            String amount = this.amountTextField.getText();
-            try {
-                Double.parseDouble(amount);
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Please enter a valid amount");
-                return;
-            }
-            params.add(amount);
-            payment.init(params);
-        }
-
-        transaction.setPayment(payment);
-        TransactionHeader header =
-                new TransactionHeader(this.storeName, customerName);
-        transaction.setTransHeader(header);
-
-        Invoice invoice = new Invoice(transaction);
-        try {
-            this.storeServer.processInvoice(invoice);
-            JOptionPane.showMessageDialog(this, "Payment processed");
-            JTextArea customFontText = new JTextArea();
-            customFontText.setFont (new Font ("MONOSPACED", Font.PLAIN, 13));
-            customFontText.setText(invoice.toString());
-            JOptionPane.showMessageDialog(this, customFontText);
-        } catch (RemoteException ex) {
-            JOptionPane.showMessageDialog(this, "\nServer not available. "
-                + "Payment still pending. Will be proccessed later.");
-            this.pendingInvoices.add(invoice);
-            JTextArea customFontText = new JTextArea();
-            customFontText.setFont (new Font ("MONOSPACED", Font.PLAIN, 13));
-            customFontText.setText(invoice.toString());
-            JOptionPane.showMessageDialog(this, invoice.toString());
-        }
-        reset();*/
     }//GEN-LAST:event_payButtonMouseClicked
                                        
-public boolean getPayClicked (){
-    return this.payClicked;
-}
-public String getPayType(){
-    return paymentComboBox.getSelectedItem().toString();
-}
-public String getAmount(){
-    return this.amountTextField.getText();
-}
+    public boolean getPayClicked (){
+        return this.payClicked;
+    }
+    public String getPayType(){
+        return paymentComboBox.getSelectedItem().toString();
+    }
+    public String getAmount(){
+        return this.amountTextField.getText();
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel amountLabel;

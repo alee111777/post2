@@ -18,8 +18,6 @@ public class NamePanel extends javax.swing.JPanel {
     public NamePanel() {
         initComponents();
         this.nameTextField.setText("");
-        
-    
     }
 
     /**
@@ -80,8 +78,6 @@ public class NamePanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
     public void reset() {
-
-
             this.nameTextField.setText("");
     }
     private void nameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nameTextFieldActionPerformed

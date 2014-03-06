@@ -14,9 +14,7 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -56,31 +54,14 @@ public class PostGUI extends javax.swing.JFrame {
         Collections.sort(upcList);
         items = new String[upcList.size()];
 
-
         int i = 0;
         for (Object upc : upcList) {
-            //this.upcComboBox.addItem((String)upc);
             items[i]=((String)upc);
             i++;
         }
         productPanelListner = new ProductChangeListener();
         paymentPanelListner = new PayChangeListener();
         initComponents();
-
-        
-
-
-        
-        //invoiceTextArea.setFont(new Font("MONOSPACED", Font.PLAIN, 13));
-        
-        //set up upc combobox
-        //this.upcComboBox.removeAllItems();
-        //productPanel.removeAllItems();
-        
-        //this.upcComboBox.setSelectedIndex(0);
-        //productPanel.setSelectedIndexUPC(0);
-        //this.quantityComboBox.setSelectedIndex(0);
-        //productPanel.setSelectedIndexQuantity(0);
         transaction = new Transaction();
         pendingInvoices = new ArrayList<Invoice>();
         this.storeServer = storeServer;
@@ -94,123 +75,38 @@ public class PostGUI extends javax.swing.JFrame {
     public void reset() {
         
         transaction = new Transaction();
-        
-        //this.amountTextField.setText("");
-        //this.upcComboBox.setSelectedIndex(0);
-        //this.quantityComboBox.setSelectedIndex(0);
-        //this.paymentComboBox.setSelectedIndex(0);
-        //this.totalAmount.setText("");
-        //this.invoiceTextArea.setText("");
         invoicePanel.reset();
         productPanel.reset();
         namePanel.reset();
         paymentPanel.reset();
         this.repaint();
     }
-    /*private void payButtonMouseClicked(java.awt.event.MouseEvent evt) {                                       
-        //String customerName = this.nameTextField.getText();
-        String customerName = this.namePanel.getCustomerName();
-        String ccNum = "";
-        ArrayList<String> params = new ArrayList<String>();
-
-        if (customerName.compareTo("") == 0) {
-            JOptionPane.showMessageDialog(this, "Please enter your name.");
-            return;
-        }
-
-        if (transaction.getTransItems().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please add some items to pay for first.");
-            return;
-        }
-
-        String payType = paymentComboBox.getSelectedItem().toString();
-        Payment payment = null;
-        try {
-            payment = (Payment)(Class.forName("payment." + payType + "Payment").newInstance());
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(PostGUI.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            Logger.getLogger(PostGUI.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            Logger.getLogger(PostGUI.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        params.add(customerName);
-        if (payment instanceof MastercardPayment
-            || payment instanceof VisaPayment) {
-            ccNum = JOptionPane.showInputDialog(
-                null, "Please enter your credit number", null);
-
-            params.add(ccNum);
-            payment.init(params);
-
-        } else if (payment instanceof CheckPayment) {
-
-            params.add(String.valueOf(this.transaction.getTotal()));
-            payment.init(params);
-
-        } else if (payment instanceof CashPayment) {
-            String amount = this.amountTextField.getText();
-            try {
-                Double.parseDouble(amount);
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Please enter a valid amount");
-                return;
-            }
-            params.add(amount);
-            payment.init(params);
-        }
-
-        transaction.setPayment(payment);
-        TransactionHeader header =
-                new TransactionHeader(this.storeName, customerName);
-        transaction.setTransHeader(header);
-
-        Invoice invoice = new Invoice(transaction);
-        try {
-            this.storeServer.processInvoice(invoice);
-            JOptionPane.showMessageDialog(this, "Payment processed");
-            JTextArea customFontText = new JTextArea();
-            customFontText.setFont (new Font ("MONOSPACED", Font.PLAIN, 13));
-            customFontText.setText(invoice.toString());
-            JOptionPane.showMessageDialog(this, customFontText);
-        } catch (RemoteException ex) {
-            JOptionPane.showMessageDialog(this, "\nServer not available. "
-                + "Payment still pending. Will be proccessed later.");
-            this.pendingInvoices.add(invoice);
-            JTextArea customFontText = new JTextArea();
-            customFontText.setFont (new Font ("MONOSPACED", Font.PLAIN, 13));
-            customFontText.setText(invoice.toString());
-            JOptionPane.showMessageDialog(this, invoice.toString());
-        }
-        reset();
-    }*/
-   public class ProductChangeListener implements PropertyChangeListener {
+    
+    public class ProductChangeListener implements PropertyChangeListener {
 	        // This method is called every time the property value is changed
 	        public void propertyChange(PropertyChangeEvent evt) {
 	            System.out.println("enter button clicked");
                     //add to show in the invoice pannel
                     
-                String upc = productPanel.getSelectedUPC();
-                ProductSpec productSpec = (ProductSpec)catalog.get(upc);
-                TransactionItem transItem = new TransactionItem(Integer.parseInt(productPanel.getQuantity()),
-                    upc, productSpec.getDescription(), productSpec.getPrice());
+                    String upc = productPanel.getSelectedUPC();
+                    ProductSpec productSpec = (ProductSpec)catalog.get(upc);
+                    TransactionItem transItem = new TransactionItem(Integer.parseInt(productPanel.getQuantity()),
+                        upc, productSpec.getDescription(), productSpec.getPrice());
 
-                String formatItem = String.format("%-22s\t %5d\t %14.2f\t\t %15.2f\n",
-                    transItem.getName(), transItem.getQuantity(), transItem.getUnitPrice(), transItem.getExtendedPrice());
-        //        invoiceTextArea.append(formatItem);
-                // BRAND NEW
-                invoicePanel.appendTransItems(formatItem);
-                transaction.addTransItem(transItem);
+                    String formatItem = String.format("%-22s\t %5d\t %14.2f\t\t %15.2f\n",
+                        transItem.getName(), transItem.getQuantity(), transItem.getUnitPrice(), transItem.getExtendedPrice());
+                
+                    // BRAND NEW
+                    invoicePanel.appendTransItems(formatItem);
+                    transaction.addTransItem(transItem);
 
-        //        totalAmount.setText("$" + String.valueOf(transaction.getTotal()) + "0");
-                // BRAND NEW
-                invoicePanel.setTotalAmount("$" + String.valueOf(transaction.getTotal()) + "0");
-                //this.repaint();                   
-	        }
+                    // BRAND NEW
+                    invoicePanel.setTotalAmount("$" + String.valueOf(transaction.getTotal()) + "0");              
+                }
 	    }
-      public class PayChangeListener implements PropertyChangeListener {
+    public class PayChangeListener implements PropertyChangeListener {
 	        // This method is called every time the property value is changed
-	        public void propertyChange(PropertyChangeEvent evt) {
+	public void propertyChange(PropertyChangeEvent evt) {
 	            System.out.println("pay button clicked");
                     
                     //add to show in the invoice pannel
@@ -429,18 +325,9 @@ public class PostGUI extends javax.swing.JFrame {
                 } catch (IOException ex) {
                     Logger.getLogger(PostGUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
-        
-        
-        HashMap catalog = store.getProductCatalog();
-//        new PostGUI(catalog).setVisible(true);
-//            System.out.println("\n\nClosing store.....");
-//            store.close();    
-                
             }
         });
     }
- 
-    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private postGUI.InvoicePanel invoicePanel;
