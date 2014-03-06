@@ -78,12 +78,12 @@ public class PostGUI extends javax.swing.JFrame {
         //productPanel.removeAllItems();
         
         //this.upcComboBox.setSelectedIndex(0);
-        /*productPanel.setSelectedIndexUPC(0);
+        //productPanel.setSelectedIndexUPC(0);
         //this.quantityComboBox.setSelectedIndex(0);
-        productPanel.setSelectedIndexQuantity(0);
+        //productPanel.setSelectedIndexQuantity(0);
         transaction = new Transaction();
         pendingInvoices = new ArrayList<Invoice>();
-        this.storeServer = storeServer;*/
+        this.storeServer = storeServer;
     }
     
     public Transaction getTransaction()
@@ -107,7 +107,7 @@ public class PostGUI extends javax.swing.JFrame {
         paymentPanel.reset();
         this.repaint();
     }
-    private void payButtonMouseClicked(java.awt.event.MouseEvent evt) {                                       
+    /*private void payButtonMouseClicked(java.awt.event.MouseEvent evt) {                                       
         //String customerName = this.nameTextField.getText();
         String customerName = this.namePanel.getCustomerName();
         String ccNum = "";
@@ -183,19 +183,110 @@ public class PostGUI extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, invoice.toString());
         }
         reset();
-    }
-   public static class ProductChangeListener implements PropertyChangeListener {
+    }*/
+   public class ProductChangeListener implements PropertyChangeListener {
 	        // This method is called every time the property value is changed
 	        public void propertyChange(PropertyChangeEvent evt) {
 	            System.out.println("enter button clicked");
                     //add to show in the invoice pannel
+                    
+                String upc = productPanel.getSelectedUPC();
+                ProductSpec productSpec = (ProductSpec)catalog.get(upc);
+                TransactionItem transItem = new TransactionItem(Integer.parseInt(productPanel.getQuantity()),
+                    upc, productSpec.getDescription(), productSpec.getPrice());
+
+                String formatItem = String.format("%-22s\t %5d\t %14.2f\t\t %15.2f\n",
+                    transItem.getName(), transItem.getQuantity(), transItem.getUnitPrice(), transItem.getExtendedPrice());
+        //        invoiceTextArea.append(formatItem);
+                // BRAND NEW
+                invoicePanel.appendTransItems(formatItem);
+                transaction.addTransItem(transItem);
+
+        //        totalAmount.setText("$" + String.valueOf(transaction.getTotal()) + "0");
+                // BRAND NEW
+                invoicePanel.setTotalAmount("$" + String.valueOf(transaction.getTotal()) + "0");
+                //this.repaint();                   
 	        }
 	    }
-      public static class PayChangeListener implements PropertyChangeListener {
+      public class PayChangeListener implements PropertyChangeListener {
 	        // This method is called every time the property value is changed
 	        public void propertyChange(PropertyChangeEvent evt) {
 	            System.out.println("pay button clicked");
+                    
                     //add to show in the invoice pannel
+                    String customerName = namePanel.getCustomerName();
+                    String ccNum = "";
+                    ArrayList<String> params = new ArrayList<String>();
+
+                    if (customerName.compareTo("") == 0) {
+                        JOptionPane.showMessageDialog(null, "Please enter your name.");
+                        return;
+                    }
+                    if (transaction.getTransItems().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Please add some items to pay for first.");
+                        return;
+                    }
+                    
+                    String payType = paymentPanel.getPayType();
+                    Payment payment = null;
+                    try {
+                        payment = (Payment)(Class.forName("payment." + payType + "Payment").newInstance());
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(PostGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (InstantiationException ex) {
+                        Logger.getLogger(PostGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IllegalAccessException ex) {
+                        Logger.getLogger(PostGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    params.add(customerName);
+                    if (payment instanceof MastercardPayment
+                        || payment instanceof VisaPayment) {
+                        ccNum = JOptionPane.showInputDialog(
+                            null, "Please enter your credit number", null);
+
+                        params.add(ccNum);
+                        payment.init(params);
+
+                    } else if (payment instanceof CheckPayment) {
+
+                        params.add(String.valueOf(transaction.getTotal()));
+                        payment.init(params);
+
+                    } else if (payment instanceof CashPayment) {
+                        String amount = paymentPanel.getAmount();
+                        try {
+                            Double.parseDouble(amount);
+                        } catch (Exception e) {
+                            JOptionPane.showMessageDialog(null, "Please enter a valid amount");
+                            return;
+                        }
+                        params.add(amount);
+                        payment.init(params);
+                    }
+
+                    transaction.setPayment(payment);
+                    TransactionHeader header =
+                            new TransactionHeader(storeName, customerName);
+                    transaction.setTransHeader(header);
+
+                    Invoice invoice = new Invoice(transaction);
+                    try {
+                        storeServer.processInvoice(invoice);
+                        JOptionPane.showMessageDialog(null, "Payment processed");
+                        JTextArea customFontText = new JTextArea();
+                        customFontText.setFont (new Font ("MONOSPACED", Font.PLAIN, 13));
+                        customFontText.setText(invoice.toString());
+                        JOptionPane.showMessageDialog(null, customFontText);
+                    } catch (RemoteException ex) {
+                        JOptionPane.showMessageDialog(null, "\nServer not available. "
+                            + "Payment still pending. Will be proccessed later.");
+                        pendingInvoices.add(invoice);
+                        JTextArea customFontText = new JTextArea();
+                        customFontText.setFont (new Font ("MONOSPACED", Font.PLAIN, 13));
+                        customFontText.setText(invoice.toString());
+                        JOptionPane.showMessageDialog(null, invoice.toString());
+                    }
+                    reset();                    
 	        }
 	    }
     /**

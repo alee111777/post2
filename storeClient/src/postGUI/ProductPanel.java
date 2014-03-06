@@ -184,7 +184,12 @@ public class ProductPanel extends javax.swing.JPanel {
 public boolean getEnterClicked (){
     return this.enterClicked;
 }
-
+public String getSelectedUPC(){
+    return (String)this.upcComboBox.getSelectedItem();
+}
+public String getQuantity(){
+    return (String) this.quantityComboBox.getSelectedItem();
+}
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton enterButton;
     private javax.swing.JPanel productPanel;

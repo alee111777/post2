@@ -211,7 +211,12 @@ public void reset() {
 public boolean getPayClicked (){
     return this.payClicked;
 }
-
+public String getPayType(){
+    return paymentComboBox.getSelectedItem().toString();
+}
+public String getAmount(){
+    return this.amountTextField.getText();
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel amountLabel;
