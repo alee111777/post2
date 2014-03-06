@@ -6,6 +6,8 @@
 
 package postGUI;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 import product.ProductSpec;
 import transaction.Transaction;
@@ -20,12 +22,20 @@ public class ProductPanel extends javax.swing.JPanel {
     private HashMap catalog;
     private Transaction transaction;
     private InvoicePanel invoicePanel;
+    private String[] items;
+    private boolean enterClicked = false;
+    
+    private PropertyChangeSupport pcs;
 
     /**
      * Creates new form ProductPanel
      */
-    public ProductPanel() {
+    public ProductPanel(String[] items, PropertyChangeListener listener) {
+        this.items = items;
+        pcs= new PropertyChangeSupport(this);
+        pcs.addPropertyChangeListener(listener);
         initComponents();
+
     }
     
     public void reset() {
@@ -53,6 +63,10 @@ public class ProductPanel extends javax.swing.JPanel {
     {
         this.upcComboBox.addItem(upc);
     }
+    /*public void addPropertyChangeListener(PropertyChangeListener listener) {
+        
+	 pcs.addPropertyChangeListener(listener);
+    }*/
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -64,7 +78,6 @@ public class ProductPanel extends javax.swing.JPanel {
 
         productPanel = new javax.swing.JPanel();
         upcLabel = new javax.swing.JLabel();
-        String[] items= {"0000","0001","0002"};
         upcComboBox = new javax.swing.JComboBox();
         quantityLabel = new javax.swing.JLabel();
         quantityComboBox = new javax.swing.JComboBox();
@@ -143,8 +156,15 @@ public class ProductPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_upcComboBoxActionPerformed
 
+
+
     private void enterButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_enterButtonMouseClicked
-        String upc = (String) this.upcComboBox.getSelectedItem();
+        boolean oldClicked = enterClicked;
+        enterClicked = true;
+        //System.out.println("clicked");
+        pcs.firePropertyChange("enterClicked", oldClicked, enterClicked);
+        enterClicked = false;
+        /*String upc = (String) this.upcComboBox.getSelectedItem();
         ProductSpec productSpec = (ProductSpec)catalog.get(upc);
         TransactionItem transItem = new TransactionItem(Integer.parseInt((String) this.quantityComboBox.getSelectedItem()),
             upc, productSpec.getDescription(), productSpec.getPrice());
@@ -159,9 +179,11 @@ public class ProductPanel extends javax.swing.JPanel {
 //        totalAmount.setText("$" + String.valueOf(transaction.getTotal()) + "0");
         // BRAND NEW
         invoicePanel.setTotalAmount("$" + String.valueOf(transaction.getTotal()) + "0");
-        this.repaint();
+        this.repaint();*/
     }//GEN-LAST:event_enterButtonMouseClicked
-
+public boolean getEnterClicked (){
+    return this.enterClicked;
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton enterButton;

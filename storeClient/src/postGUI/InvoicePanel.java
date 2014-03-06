@@ -7,6 +7,8 @@
 package postGUI;
 
 import java.awt.Font;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import javax.swing.JPanel;
 
 /**
@@ -18,10 +20,14 @@ public class InvoicePanel extends javax.swing.JPanel {
     /**
      * Creates new form InvoicePanel
      */
+
+    
+    private PropertyChangeSupport pcs;
     public InvoicePanel() {
         JPanel panel = new JPanel();
         initComponents();
         invoiceTextArea.setFont(new Font("MONOSPACED", Font.PLAIN, 13));
+
     }
     
     public void setTotalAmount (String total) {
@@ -37,7 +43,7 @@ public class InvoicePanel extends javax.swing.JPanel {
         this.invoiceTextArea.setText("");
         this.repaint();
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

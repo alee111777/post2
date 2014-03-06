@@ -90,7 +90,6 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="upcComboBoxActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="String[] items= {&quot;0000&quot;,&quot;0001&quot;,&quot;0002&quot;};"/>
             <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="for (int i = 0; i&lt;items.length;i++){&#xa;    upcComboBox.addItem(items[i]);&#xa;}"/>
           </AuxValues>
         </Component>

@@ -8,6 +8,8 @@ package postGUI;
 
 import istore.IStore;
 import java.awt.Font;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -32,12 +34,17 @@ public class PaymentPanel extends javax.swing.JPanel {
     private Transaction transaction;
     private String storeName;
     private IStore storeServer;
+    private boolean payClicked = false;
+    
+    private PropertyChangeSupport pcs;
 
     /**
      * Creates new form PaymentPanel
      */
-    public PaymentPanel() {
+    public PaymentPanel(PropertyChangeListener listener) {
         initComponents();
+        pcs= new PropertyChangeSupport(this);
+        pcs.addPropertyChangeListener(listener);
     }
 
     /**
@@ -114,9 +121,18 @@ public class PaymentPanel extends javax.swing.JPanel {
             .addComponent(paymentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
-
+public void reset() {
+        
+        this.amountTextField.setText("");
+        this.paymentComboBox.setSelectedIndex(0);
+}
     private void payButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_payButtonMouseClicked
-        String customerName = this.nameTextField.getText();
+        boolean oldClicked = payClicked;
+        payClicked = true;
+        //System.out.println("clicked");
+        pcs.firePropertyChange("payClicked", oldClicked, payClicked);
+        payClicked = false;
+        /*String customerName = this.nameTextField.getText();
         String ccNum = "";
         ArrayList<String> params = new ArrayList<String>();
 
@@ -189,8 +205,12 @@ public class PaymentPanel extends javax.swing.JPanel {
             customFontText.setText(invoice.toString());
             JOptionPane.showMessageDialog(this, invoice.toString());
         }
-        reset();
+        reset();*/
     }//GEN-LAST:event_payButtonMouseClicked
+                                       
+public boolean getPayClicked (){
+    return this.payClicked;
+}
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
